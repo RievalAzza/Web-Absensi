@@ -45,11 +45,13 @@ $nosis_xii = 1;
 
     <!-- Data Siswa -->
     <h2>Data Siswa Kelas X</h2>
+    <a href="tambah_data.php?kelas=x">+ Tambah Kelas X</a>
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
             <th>No</th>
             <th>Nama Lengkap</th>
             <th>Kelas</th>
+            <th>Aksi</th>
         </tr>
         <?php
         $result = mysqli_query($conn, "SELECT * FROM siswa_x");
@@ -58,6 +60,10 @@ $nosis_xii = 1;
                 <td>{$nosis_x}</td>
                 <td>{$row['nama_lengkap']}</td>
                 <td>{$row['kelas']}</td>
+                <td>
+                    <a href='edit_data.php?id=" . $row['id'] . "&kelas=" . $row['kelas'] . "'>Edit</a>
+                    <a href='../controller/hapus_data.php?id=" . $row['id'] . "&kelas=" . $row['kelas'] . "' onclick=\"return confirm('Yakin hapus data ini?')\">Hapus</a>
+                </td>
             </tr>";
             $nosis_x++;
         }
@@ -65,11 +71,13 @@ $nosis_xii = 1;
     </table>
 
     <h2>Data Siswa Kelas XI</h2>
+    <a href="tambah_data.php?kelas=xi">+ Tambah Kelas XI</a>
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
             <th>No</th>
             <th>Nama Lengkap</th>
             <th>Kelas</th>
+            <th>Aksi</th>
         </tr>
         <?php
         $result = mysqli_query($conn, "SELECT * FROM siswa_xi");
@@ -78,6 +86,10 @@ $nosis_xii = 1;
                 <td>{$nosis_xi}</td>
                 <td>{$row['nama_lengkap']}</td>
                 <td>{$row['kelas']}</td>
+                <td>
+                    <a href='edit_data.php?id=" . $row['id'] . "&kelas=" . $row['kelas'] . "'>Edit</a>
+                    <a href='../controller/hapus_data.php?id=" . $row['id'] . "&kelas=" . $row['kelas'] . "' onclick=\"return confirm('Yakin hapus data ini?')\">Hapus</a>
+                </td>
             </tr>";
             $nosis_xi++;
         }
@@ -85,11 +97,13 @@ $nosis_xii = 1;
     </table>
 
     <h2>Data Siswa Kelas XII</h2>
+    <a href="tambah_data.php?kelas=xii">+ Tambah Kelas XII</a>
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
             <th>No</th>
             <th>Nama Lengkap</th>
             <th>Kelas</th>
+            <th>Aksi</th>
         </tr>
         <?php
         $result = mysqli_query($conn, "SELECT * FROM siswa_xii");
@@ -98,6 +112,11 @@ $nosis_xii = 1;
                 <td>{$nosis_xii}</td>
                 <td>{$row['nama_lengkap']}</td>
                 <td>{$row['kelas']}</td>
+                <td>
+                    <a href='edit_data.php?id=" . $row['id'] . "&kelas=" . $row['kelas'] . "'>Edit</a>
+                    <a href='../controller/hapus_data.php?id=" . $row['id'] . "&kelas=" . $row['kelas'] . "' onclick=\"return confirm('Yakin hapus data ini?')\">Hapus</a>
+
+                </td>
             </tr>";
             $nosis_xii++;
         }

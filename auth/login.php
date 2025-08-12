@@ -22,8 +22,8 @@ if (isset($_SESSION['role'])) {
 <body>
     <form action="../controller/proses_login.php" method="post">
         <h2>Login</h2>
-        <input type="text" name="username", placeholder="Nama Lengkap" required>
-        <input type="password" name="password", placeholder="Password" required>
+        <input type="text" name="username", placeholder="Nama Lengkap" required> <br>
+        <input type="password" name="password", placeholder="Password" required> <br>
         <button type="submit">Login</button>
     </form>
 </body>
