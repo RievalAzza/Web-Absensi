@@ -1,7 +1,8 @@
 <?php
 session_start();
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    die("Akses ditolak! Halaman ini hanya untuk admin.");
+    header("Location: ../auth/login.php");
+    exit;
 }
 
 include "../config/db.php";
