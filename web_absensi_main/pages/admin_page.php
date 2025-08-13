@@ -1,0 +1,180 @@
+<?php
+session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    header("Location: ../auth/login.php");
+    exit;
+}
+
+include '../config/db.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Halaman Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold">Selamat Datang, <span class="text-blue-600"><?php echo $_SESSION['username']; ?></span>!</h1>
+                <p class="text-gray-600">Ini adalah halaman admin. Anda dapat melihat semua data di sini.</p>
+            </div>
+            <a href="../auth/logout.php" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</a>
+        </div>
+
+        <!-- Data Admin -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Data Admin</h2>
+            <div class="overflow-x-auto bg-white rounded-lg shadow">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-blue-500 text-white">
+                            <th class="p-3">No</th>
+                            <th class="p-3">Nama</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $no_admin = 1; 
+                        $result = mysqli_query($conn, "SELECT * FROM admin");
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr class='border-b hover:bg-gray-50'>
+                                <td class='p-3'>{$no_admin}</td>
+                                <td class='p-3'>{$row['nama']}</td>
+                            </tr>";
+                            $no_admin++;
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Data Siswa -->
+        <?php
+        $kelasData = [
+            'X' => ['table' => 'siswa_x', 'var' => 'nosis_x'],
+            'XI' => ['table' => 'siswa_xi', 'var' => 'nosis_xi'],
+            'XII' => ['table' => 'siswa_xii', 'var' => 'nosis_xii']
+        ];
+        foreach ($kelasData as $kelas => $data) {
+            ${$data['var']} = 1;
+            echo "<section class='mb-8'>
+                    <div class='flex justify-between items-center mb-4'>
+                        <h2 class='text-xl font-semibold'>Data Siswa Kelas {$kelas}</h2>
+                        <a href='tambah_data.php?kelas=" . strtolower($kelas) . "' class='bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600'>+ Tambah Kelas {$kelas}</a>
+                    </div>
+                    <div class='overflow-x-auto bg-white rounded-lg shadow'>
+                        <table class='w-full text-left border-collapse'>
+                            <thead>
+                                <tr class='bg-blue-500 text-white'>
+                                    <th class='p-3'>No</th>
+                                    <th class='p-3'>Nama Lengkap</th>
+                                    <th class='p-3'>Kelas</th>
+                                    <th class='p-3'>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>";
+            
+            $result = mysqli_query($conn, "SELECT * FROM {$data['table']}");
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr class='border-b hover:bg-gray-50'>
+                        <td class='p-3'>" . ${$data['var']} . "</td>
+                        <td class='p-3'>{$row['nama_lengkap']}</td>
+                        <td class='p-3'>{$row['kelas']}</td>
+                        <td class='p-3'>
+                            <a href='edit_data.php?id={$row['id']}&kelas={$row['kelas']}' class='text-yellow-500 hover:underline mr-2'>Edit</a>
+                            <a href='../controller/hapus_data.php?id={$row['id']}&kelas={$row['kelas']}' onclick=\"return confirm('Yakin hapus data ini?')\" class='text-red-500 hover:underline'>Hapus</a>
+                        </td>
+                    </tr>";
+                ${$data['var']}++;
+            }
+            echo "      </tbody>
+                        </table>
+                    </div>
+                </section>";
+        }
+        ?>
+
+        <!-- Data Absensi -->
+        <section>
+            <h2 class="text-xl font-semibold mb-4">Data Absensi</h2>
+            <form method="GET" action="" class="bg-white p-4 rounded-lg shadow mb-4 flex flex-wrap gap-4">
+                <div>
+                    <label class="block text-gray-700 text-sm mb-1">Kelas:</label>
+                    <select name="kelas" class="border rounded px-3 py-2">
+                        <option value="">Semua</option>
+                        <option value="X" <?= isset($_GET['kelas']) && $_GET['kelas']=='X'?'selected':''; ?>>X</option>
+                        <option value="XI" <?= isset($_GET['kelas']) && $_GET['kelas']=='XI'?'selected':''; ?>>XI</option>
+                        <option value="XII" <?= isset($_GET['kelas']) && $_GET['kelas']=='XII'?'selected':''; ?>>XII</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm mb-1">Tanggal:</label>
+                    <input type="date" name="tanggal" value="<?= isset($_GET['tanggal']) ? $_GET['tanggal'] : ''; ?>" class="border rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm mb-1">Cari Nama:</label>
+                    <input type="text" name="search" placeholder="Cari nama..." value="<?= isset($_GET['search']) ? $_GET['search'] : ''; ?>" class="border rounded px-3 py-2">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Filter</button>
+                </div>
+            </form>
+
+            <div class="overflow-x-auto bg-white rounded-lg shadow">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-blue-500 text-white">
+                            <th class="p-3">No</th>
+                            <th class="p-3">Nama Siswa</th>
+                            <th class="p-3">Kelas</th>
+                            <th class="p-3">Tanggal</th>
+                            <th class="p-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $kelas_filter = isset($_GET['kelas']) ? $_GET['kelas'] : '';
+                        $tanggal_filter = isset($_GET['tanggal']) ? $_GET['tanggal'] : '';
+                        $search_filter = isset($_GET['search']) ? $_GET['search'] : '';
+
+                        $sql = "SELECT * FROM absen WHERE 1=1";
+
+                        if ($kelas_filter != '') {
+                            $sql .= " AND kelas = '$kelas_filter'";
+                        }
+
+                        if ($tanggal_filter != '') {
+                            $sql .= " AND tanggal = '$tanggal_filter'";
+                        }
+
+                        if ($search_filter != '') {
+                            $sql .= " AND nama_siswa LIKE '%$search_filter%'";
+                        }
+
+                        $result = mysqli_query($conn, $sql);
+                        $no_absen = 1;
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr class='border-b hover:bg-gray-50'>
+                                <td class='p-3'>{$no_absen}</td>
+                                <td class='p-3'>{$row['nama_siswa']}</td>
+                                <td class='p-3'>{$row['kelas']}</td>
+                                <td class='p-3'>{$row['tanggal']}</td>
+                                <td class='p-3'>{$row['status']}</td>
+                            </tr>";
+                            $no_absen++;
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+</body>
+</html>
