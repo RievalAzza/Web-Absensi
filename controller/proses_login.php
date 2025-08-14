@@ -1,42 +1,32 @@
 <?php
 session_start();
-include '../config/db.php'; // Pastikan file conn ke database
+include '../config/db.php'; // Koneksi ke database
 
 $username = $_POST['username'];
-$password = md5($_POST['password']);
+$password = md5($_POST['password']); // Pastikan sama hashing-nya dengan yang di database
 
-
-// Cek di tabel admin
-$sql = "SELECT * FROM admin WHERE nama='$username' AND password='$password'";
+// Query cek user
+$sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
 $result = mysqli_query($conn, $sql);
+
 if (mysqli_num_rows($result) > 0) {
-    $_SESSION['username'] = $username;
-    $_SESSION['role'] = 'admin';
-    header("Location: ../pages/admin_page.php");
+    $user = mysqli_fetch_assoc($result);
+
+    // Simpan data ke session
+    $_SESSION['username'] = $user['username'];
+    $_SESSION['role'] = $user['role'];
+    $_SESSION['kelas'] = $user['kelas'];
+
+    // Arahkan sesuai role
+    if ($user['role'] === 'admin') {
+        header("Location: ../pages/admin_page.php");
+    } else if ($user['role'] === 'siswa') {
+        header("Location: ../pages/siswa_page.php");
+    }
+    exit;
+} else {
+    // Gagal login
+    header("Location: ../auth/login.php?pesan=gagal");
     exit;
 }
-
-// Daftar tabel yang akan dicek
-$tabel_siswa = [
-    'siswa_x'   => 'X',
-    'siswa_xi'  => 'XI',
-    'siswa_xii' => 'XII'
-];
-
-// Cek di semua tabel siswa
-foreach ($tabel_siswa as $tabel => $kelas) {
-    $sql = "SELECT * FROM $tabel WHERE nama_lengkap='$username' AND password='$password'";
-    $result = mysqli_query($conn, $sql);
-    if (mysqli_num_rows($result) > 0) {
-        $_SESSION['username'] = $username;
-        $_SESSION['role'] = 'siswa';
-        $_SESSION['kelas'] = $kelas;
-        header("Location: ../pages/siswa_page.php");
-        exit;
-    }
-}
-
-// Kalau tidak ada yang cocok
-header("Location: ../auth/login.php?pesan=gagal");
-exit;
 ?>

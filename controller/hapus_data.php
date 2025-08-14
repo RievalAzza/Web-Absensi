@@ -7,17 +7,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
 
 include "../config/db.php";
 
-$kelas = $_GET['kelas'] ?? '';
 $id = $_GET['id'] ?? 0;
 
-if (!in_array(strtoupper($kelas), ['X', 'XI', 'XII'])) {
-    die("Kelas tidak valid");
-}
-
-$tabel = "siswa_" . strtolower($kelas);
-
-// Hapus data
-mysqli_query($conn, "DELETE FROM $tabel WHERE id='$id'");
+// Cegah hapus admin
+mysqli_query($conn, "DELETE FROM users WHERE id='$id' AND role='siswa'");
 
 header("Location: ../pages/admin_page.php");
 exit;

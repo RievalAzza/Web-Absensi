@@ -7,22 +7,18 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
 
 include "../config/db.php";
 
+// Ambil kelas dari query string (x, xi, xii)
 $kelas = $_GET['kelas'] ?? '';
-
-if (!in_array($kelas, ['x', 'xi', 'xii'])) {
-    die("Kelas tidak valid");
-}
-
-// Tentukan nama tabel berdasarkan kelas
-$tabel = "siswa_" . $kelas;
 
 // Jika form disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama_lengkap = $_POST['nama_lengkap'];
-    $kelas_input = $_POST['kelas'];
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $kelas_input = mysqli_real_escape_string($conn, $_POST['kelas']);
     $pass = md5($_POST['password']);
 
-    $sql = "INSERT INTO $tabel (nama_lengkap, kelas, password) VALUES ('$nama_lengkap', '$kelas_input', '$pass')";
+    // Insert ke tabel users
+    $sql = "INSERT INTO users (username, password, kelas, role) 
+            VALUES ('$username', '$pass', '$kelas_input', 'siswa')";
     mysqli_query($conn, $sql);
 
     header("Location: admin_page.php");
@@ -45,16 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="POST" class="space-y-5">
             <div>
-                <label class="block text-gray-700 font-medium mb-1">Nama Lengkap:</label>
-                <input type="text" name="nama_lengkap" required
+                <label class="block text-gray-700 font-medium mb-1">Username / Nama Lengkap:</label>
+                <input type="text" name="username" required
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
             </div>
 
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Kelas:</label>
-                <input type="text" name="kelas" value="<?= strtoupper($kelas) ?>" required
+                <select name="kelas" required
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <option value="X">X</option>
+                    <option value="XI">XI</option>
+                    <option value="XII">XII</option>
+                </select>
             </div>
+
 
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Password:</label>

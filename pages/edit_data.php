@@ -6,18 +6,15 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
 }
 include '../config/db.php';
 
-// Ambil parameter kelas & id
-$kelas = $_GET['kelas'] ?? '';
+// Ambil parameter id user
 $id = $_GET['id'] ?? '';
 
-if (!in_array($kelas, ['X', 'XI', 'XII'])) {
-    die("Kelas tidak valid");
+if (empty($id)) {
+    die("ID tidak valid");
 }
 
-$tabel = "siswa_" . strtolower($kelas);
-
-// Ambil data lama
-$query = mysqli_query($conn, "SELECT * FROM $tabel WHERE id='$id'");
+// Ambil data lama dari tabel users
+$query = mysqli_query($conn, "SELECT * FROM users WHERE id='$id'");
 $data = mysqli_fetch_assoc($query);
 
 if (!$data) {
@@ -26,16 +23,16 @@ if (!$data) {
 
 // Jika form disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama_lengkap = $_POST['nama_lengkap'];
+    $username = $_POST['username'];
     $kelas_input = $_POST['kelas'];
     $pass = !empty($_POST['password']) ? md5($_POST['password']) : $data['password'];
 
-    $sql = "UPDATE $tabel 
-            SET nama_lengkap='$nama_lengkap', kelas='$kelas_input', password='$pass' 
+    $sql = "UPDATE users 
+            SET username='$username', kelas='$kelas_input', password='$pass' 
             WHERE id='$id'";
     mysqli_query($conn, $sql);
 
-    header("Location: admin_page.php?kelas=$kelas");
+    header("Location: admin_page.php");
     exit;
 }
 ?>
@@ -43,27 +40,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Data Siswa</title>
+    <title>Edit Data User</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
 
     <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-8">
         <h2 class="text-2xl font-bold text-gray-800 mb-6">
-            Edit Data Siswa (<?= strtoupper(str_replace('siswa_', '', $tabel)) ?>)
+            Edit Data User
         </h2>
 
         <form method="POST" class="space-y-5">
             <div>
-                <label class="block text-gray-700 font-medium mb-1">Nama Lengkap:</label>
-                <input type="text" name="nama_lengkap" value="<?= htmlspecialchars($data['nama_lengkap']) ?>" required
+                <label class="block text-gray-700 font-medium mb-1">Username / Nama Lengkap:</label>
+                <input type="text" name="username" value="<?= htmlspecialchars($data['username']) ?>" required
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
             </div>
 
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Kelas:</label>
-                <input type="text" name="kelas" value="<?= htmlspecialchars($data['kelas']) ?>" required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <select name="kelas" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <option value="">- Pilih Kelas -</option>
+                    <option value="X" <?= $data['kelas'] == 'X' ? 'selected' : '' ?>>X</option>
+                    <option value="XI" <?= $data['kelas'] == 'XI' ? 'selected' : '' ?>>XI</option>
+                    <option value="XII" <?= $data['kelas'] == 'XII' ? 'selected' : '' ?>>XII</option>
+                </select>
             </div>
 
             <div>
@@ -73,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="flex justify-end gap-3">
-                <a href="admin_page.php?kelas=<?= $kelas ?>" 
+                <a href="admin_page.php" 
                 class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition">
                     Batal
                 </a>
