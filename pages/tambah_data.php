@@ -25,56 +25,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Tambah Data Siswa</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tambah Data</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{boxShadow:{soft:"0 8px 30px rgba(0,0,0,.10)"}}}};</script>
+  <meta name="color-scheme" content="light dark" />
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+<body class="min-h-dvh relative overflow-hidden bg-neutral-950 text-neutral-100">
+  <div class="absolute inset-0 -z-10">
+    <div class="h-full w-full bg-[url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2067&auto=format&fit=crop')] bg-cover bg-center"></div>
+    <div class="absolute inset-0 bg-neutral-950/70"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-black/50 via-black/20 to-black/50"></div>
+  </div>
+  <div class="min-h-dvh max-w-7xl mx-auto p-4 sm:p-6">
+    
+<div class="mb-4 flex items-center justify-between gap-3">
+  <div>
+    <h1 class="text-2xl font-semibold leading-tight">Tambah Data Siswa</h1>
+    <p class="text-sm text-neutral-300">Masukkan informasi siswa dengan benar.</p>
+  </div>
+  <div class="hidden sm:flex items-center gap-2">
+    <a href="admin_page.php" class="rounded-lg border border-white/20 bg-white/10 backdrop-blur px-3 py-2 text-sm hover:bg-white/15">Dashboard</a>
+  </div>
+</div>
 
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-            Tambah Data Siswa Kelas <?= strtoupper($kelas) ?>
-        </h2>
-
-        <form method="POST" class="space-y-5">
-            <div>
-                <label class="block text-gray-700 font-medium mb-1">Username / Nama Lengkap:</label>
-                <input type="text" name="username" required
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-            </div>
-
-            <div>
-                <label class="block text-gray-700 font-medium mb-1">Kelas:</label>
-                <select name="kelas" required
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    <option value="X">X</option>
-                    <option value="XI">XI</option>
-                    <option value="XII">XII</option>
-                </select>
-            </div>
-
-
-            <div>
-                <label class="block text-gray-700 font-medium mb-1">Password:</label>
-                <input type="password" name="password" required
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-            </div>
-
-            <div class="flex justify-end gap-3">
-                <a href="admin_page.php" 
-                class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition">
-                    Batal
-                </a>
-                <button type="submit" 
-                        class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
-                    Simpan
-                </button>
-            </div>
-        </form>
+<section class="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md shadow-soft p-4">
+  <form method="post" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div>
+      <label class="block text-sm mb-1" for="username">Username</label>
+      <input id="username" name="username" required
+             class="w-full rounded-lg bg-white/90 text-neutral-900 placeholder-neutral-500 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70" placeholder="cth: Wahyu">
     </div>
+    <div>
+      <label class="block text-sm mb-1" for="kelas">Kelas</label>
+      <select id="kelas" name="kelas" class="w-full rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
+        <?php foreach (['X','XI','XII','-'] as $k): ?>
+          <option value="<?= $k ?>" <?= (($_GET['kelas'] ?? '')===$k)?'selected':'' ?>><?= $k ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="sm:col-span-2">
+      <label class="block text-sm mb-1" for="password">Password</label>
+      <input id="password" type="password" name="password" required
+             class="w-full rounded-lg bg-white/90 text-neutral-900 placeholder-neutral-500 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70" placeholder="Minimal 6 karakter">
+      <p class="mt-1 text-[12px] text-neutral-300">Catatan: saat ini tersimpan MD5 sesuai logic asli.</p>
+    </div>
+    <div class="sm:col-span-2 pt-2 flex items-center justify-end gap-2">
+      <a href="data_siswa.php" class="rounded-lg border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm hover:bg-white/15">Batal</a>
+      <button type="submit" class="rounded-lg bg-white text-neutral-900 px-4 py-2 text-sm hover:bg-neutral-100">Simpan</button>
+    </div>
+  </form>
+</section>
 
+    <div class="mt-6 text-xs text-neutral-300">© Kelola.Biz</div>
+  </div>
 </body>
 </html>
