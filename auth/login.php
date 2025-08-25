@@ -89,7 +89,7 @@ if (isset($_SESSION['role'])) {
 
         <!-- Bantuan kecil -->
         <div class="mt-4 text-[13px] text-neutral-300 leading-relaxed">
-            Tip: jika background terasa terlalu terang, ubah intensitas overlay pada kelas <code>bg-neutral-950/70</code> di atas.
+            <code>bg-neutral-950/70</code> di atas.
         </div>
     </div>
 
