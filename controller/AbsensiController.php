@@ -11,6 +11,7 @@ $offset_absen = ($page_absen - 1) * $limit_absen;
 $kelas_absen   = isset($_GET['kelas_absen']) ? $_GET['kelas_absen'] : '';
 $tanggal_absen = isset($_GET['tanggal']) ? $_GET['tanggal'] : '';
 $search_absen  = isset($_GET['search_absen']) ? $_GET['search_absen'] : '';
+$status  = isset($_GET['status']) ? $_GET['status'] : '';
 
 // Query
 $sql_absen = "SELECT * FROM absen WHERE 1=1";
@@ -22,6 +23,9 @@ if ($tanggal_absen != '') {
 }   
 if ($search_absen != '') {
     $sql_absen .= " AND nama_siswa LIKE '%$search_absen%'";
+}
+if ($status != '') {
+    $sql_absen .= " AND status LIKE '%$status%'";
 }
 $sql_absen .= " ORDER BY tanggal DESC";
 

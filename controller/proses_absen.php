@@ -16,7 +16,7 @@ $tanggal_jam = date('Y-m-d H:i:s');
 $jam_sekarang = date('H:i:s');
 
 // Tentukan batas jam masuk
-$batas_jam = "07:00:00";
+$batas_jam = "10:00:00";
 $keterangan = ($jam_sekarang > $batas_jam) ? "Terlambat" : "Tepat Waktu";
 
 // Cek apakah sudah absen hari ini

@@ -47,24 +47,30 @@
     
     <section class="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md shadow-soft p-4 mb-4">
     <?php
-        $q      = $_GET['q']     ?? ($data_absensi['query']  ?? '');
-        $from   = $_GET['from']  ?? ($data_absensi['from']   ?? '');
-        $to     = $_GET['to']    ?? ($data_absensi['to']     ?? '');
-        $status = $_GET['status']?? ($data_absensi['status'] ?? '');
+        // Mengambil parameter filter dari URL atau data yang dikembalikan controller
+        $kelas_absen = $_GET['kelas_absen'] ?? ($data_absensi['kelas_absen'] ?? '');
+        $tanggal = $_GET['tanggal'] ?? ($data_absensi['tanggal'] ?? '');
+        $search_absen = $_GET['search_absen'] ?? ($data_absensi['search_absen'] ?? '');
+        $status = $_GET['status'] ?? ($data_absensi['status'] ?? '');
     ?>
-    <form method="get" class="grid grid-cols-1 sm:grid-cols-5 gap-2">
-        <input name="q" value="<?= htmlspecialchars($q) ?>" class="sm:col-span-2 rounded-lg bg-white/90 text-neutral-900 placeholder-neutral-500 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70" placeholder="Cari nama / NIS / kelas…">
-        <input type="date" name="from" value="<?= htmlspecialchars($from) ?>" class="rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
-        <input type="date" name="to" value="<?= htmlspecialchars($to) ?>" class="rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
-        <select name="status" class="rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
-        <option value="">Semua Status</option>
-        <?php foreach (['Hadir','Izin','Sakit','Alpa','Terlambat'] as $st): ?>
-            <option value="<?= $st ?>" <?= $status===$st?'selected':'' ?>><?= $st ?></option>
-        <?php endforeach; ?>
+    <form method="get" class="grid grid-cols-1 sm:grid-cols-6 gap-2">
+        <select name="kelas_absen" class="rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
+            <option value="">Semua Kelas</option>
+            <option value="X" <?= $kelas_absen=='X'?'selected':''; ?>>X</option>
+            <option value="XI" <?= $kelas_absen=='XI'?'selected':''; ?>>XI</option>
+            <option value="XII" <?= $kelas_absen=='XII'?'selected':''; ?>>XII</option>
         </select>
-        <div class="sm:col-span-5 flex items-center gap-2">
-        <button class="rounded-lg bg-white text-neutral-900 px-4 py-2 text-sm hover:bg-neutral-100">Terapkan</button>
-        <a href="data_absen.php" class="rounded-lg border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm hover:bg-white/15">Reset</a>
+        <input type="date" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>" class="rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
+        <input name="search_absen" value="<?= htmlspecialchars($search_absen) ?>" class="rounded-lg bg-white/90 text-neutral-900 placeholder-neutral-500 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70" placeholder="Cari nama siswa...">
+        <select name="status" class="rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
+            <option value="">Semua Status</option>
+            <?php foreach (['Hadir','Izin','Sakit','Alpa'] as $st): ?>
+                <option value="<?= $st ?>" <?= $status===$st?'selected':'' ?>><?= $st ?></option>
+            <?php endforeach; ?>
+        </select>
+        <div class="sm:col-span-6 flex items-center gap-2">
+            <button class="rounded-lg bg-white text-neutral-900 px-4 py-2 text-sm hover:bg-neutral-100">Terapkan</button>
+            <a href="data_absen.php" class="rounded-lg border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm hover:bg-white/15">Reset</a>
         </div>
     </form>
     </section>
@@ -75,25 +81,21 @@
         <table class="min-w-[760px] w-full text-sm">
         <thead class="bg-white/10 text-neutral-200">
             <tr>
-            <th class="text-left px-4 py-3">Tanggal</th>
+            <th class="text-left px-4 py-3">No</th>
             <th class="text-left px-4 py-3">Nama</th>
             <th class="text-left px-4 py-3">Kelas</th>
+            <th class="text-left px-4 py-3">Tanggal</th>
             <th class="text-left px-4 py-3">Status</th>
-            <th class="text-left px-4 py-3">Catatan</th>
+            <th class="text-left px-4 py-3">Keterangan</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-white/10">
             <?php
+            // Mengambil data dari controller
+            $result_absen = $data_absensi['result_absen'] ?? null;
+            $offset_absen = $data_absensi['offset_absen'] ?? 0;
             
-            $rows = [];
-            foreach (['rows','items','data','absensi'] as $k) {
-                if (!empty($data_absensi[$k]) && is_array($data_absensi[$k])) { $rows = $data_absensi[$k]; break; }
-            }
-            
-            function field($r, $cands, $default='-'){
-                foreach ($cands as $c){ if (isset($r[$c]) && $r[$c] !== '') return $r[$c]; }
-                return $default;
-            }
+            // Fungsi untuk menampilkan badge status
             function badge($status){
                 $map = [
                 'Hadir' => 'bg-green-500/20 text-green-100 border-green-400/30',
@@ -105,35 +107,37 @@
                 $cls = $map[$status] ?? 'bg-white/10 text-white border-white/20';
                 return "<span class='px-2 py-1 rounded-md text-xs font-medium border $cls'>".htmlspecialchars($status)."</span>";
             }
+            
+            // Jika ada data, tampilkan
+            if ($result_absen && mysqli_num_rows($result_absen) > 0) {
+                $no_absen = $offset_absen + 1;
+                while ($row = mysqli_fetch_assoc($result_absen)) {
+                    echo "<tr class='hover:bg-white/5'>
+                        <td class='px-4 py-3'>{$no_absen}</td>
+                        <td class='px-4 py-3 font-medium'>" . htmlspecialchars($row['nama_siswa'] ?? '-') . "</td>
+                        <td class='px-4 py-3'>" . htmlspecialchars($row['kelas'] ?? '-') . "</td>
+                        <td class='px-4 py-3'>" . (!empty($row['tanggal']) ? date('d-m-Y', strtotime($row['tanggal'])) : '-') . "</td>
+                        <td class='px-4 py-3'>" . badge($row['status'] ?? '-') . "</td>
+                        <td class='px-4 py-3 text-neutral-300'>" . htmlspecialchars($row['keterangan'] ??  '-') . "</td>
+                    </tr>";
+                    $no_absen++;
+                }
+            } else {
+                echo "<tr><td colspan='6' class='px-4 py-8 text-center text-neutral-300'>Tidak ada data absensi.</td></tr>";
+            }
             ?>
-            <?php if (!empty($rows)): ?>
-            <?php foreach ($rows as $r): ?>
-                <?php
-                $tanggal = field($r, ['tanggal','date','tgl']);
-                $nama    = field($r, ['nama','nama_lengkap','siswa_nama','student_name']);
-                $kelas   = strtoupper(field($r, ['kelas','class','grade'], ''));
-                $statusV = field($r, ['status','kehadiran','attendance']);
-                $catatan = field($r, ['catatan','note','keterangan'], '-');
-                ?>
-                <tr class="hover:bg-white/5">
-                <td class="px-4 py-3"><?= htmlspecialchars($tanggal) ?></td>
-                <td class="px-4 py-3 font-medium"><?= htmlspecialchars($nama ?: '-') ?></td>
-                <td class="px-4 py-3"><?= htmlspecialchars($kelas ?: '-') ?></td>
-                <td class="px-4 py-3"><?= $statusV ? badge($statusV) : '-' ?></td>
-                <td class="px-4 py-3 text-neutral-300"><?= htmlspecialchars($catatan) ?></td>
-                </tr>
-            <?php endforeach; ?>
-            <?php else: ?>
-            <tr><td colspan="5" class="px-4 py-8 text-center text-neutral-300">Belum ada data.</td></tr>
-            <?php endif; ?>
         </tbody>
         </table>
     </div>
     
     <div class="mt-4 flex items-center gap-2 flex-wrap">
         <?php
-        for ($i = 1; $i <= ($data_absensi['total_pages_absen'] ?? 1); $i++) {
-            $active = ($i == ($data_absensi['page_absen'] ?? 1)) ? "bg-white text-neutral-900" : "bg-white/10 text-white hover:bg-white/15";
+        // Pagination
+        $total_pages_absen = $data_absensi['total_pages_absen'] ?? 1;
+        $page_absen = $data_absensi['page_absen'] ?? 1;
+        
+        for ($i = 1; $i <= $total_pages_absen; $i++) {
+            $active = ($i == $page_absen) ? "bg-white text-neutral-900" : "bg-white/10 text-white hover:bg-white/15";
             $url_params = $_GET;
             $url_params['page_absen'] = $i;
             $link = "?".http_build_query($url_params);

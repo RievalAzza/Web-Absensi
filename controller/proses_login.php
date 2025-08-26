@@ -3,8 +3,7 @@ session_start();
 include '../config/db.php'; // Koneksi ke database
 
 $username = $_POST['username'];
-$password = md5($_POST['password']); // Pastikan sama hashing-nya dengan yang di database
-
+$password = md5($_POST['password']); 
 // Query cek user
 $sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
 $result = mysqli_query($conn, $sql);

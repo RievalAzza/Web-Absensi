@@ -111,7 +111,7 @@ $admin_role = $_SESSION['role'] ?? 'admin';
       </div>
     </div>
     <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
-      <a href="tambah_data.php?kelas=X" class="rounded-lg border border-white/20 bg-white/10 backdrop-blur px-3 py-2 hover:bg-white/15 text-center">+ Tambah Siswa</a>
+      <a href="data_siswa.php?" class="rounded-lg bg-white text-neutral-900 px-3 py-2 hover:bg-neutral-100 text-center">Data Kelas</a>
       <a href="data_absen.php" class="rounded-lg bg-white text-neutral-900 px-3 py-2 hover:bg-neutral-100 text-center">📋 Data Absen</a>
     </div>
   </div>

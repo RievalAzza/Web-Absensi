@@ -72,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label class="block text-sm mb-1" for="password">Password</label>
       <input id="password" type="password" name="password" required
              class="w-full rounded-lg bg-white/90 text-neutral-900 placeholder-neutral-500 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70" placeholder="Minimal 6 karakter">
-      <p class="mt-1 text-[12px] text-neutral-300">Catatan: saat ini tersimpan MD5 sesuai logic asli.</p>
     </div>
     <div class="sm:col-span-2 pt-2 flex items-center justify-end gap-2">
       <a href="data_siswa.php" class="rounded-lg border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm hover:bg-white/15">Batal</a>
