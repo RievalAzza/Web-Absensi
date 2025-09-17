@@ -1,6 +1,14 @@
 <?php 
-    // Tetap: ambil data dari controller (jangan diubah logic-nya)
-    $data_absensi = include '../controller/AbsensiController.php';
+  
+    require_once '../controller/AbsensiController.php';
+    
+    $data_absensi = [
+        'result_absen' => $result_absen,
+        'offset_absen' => $offset_absen,
+        'page_absen' => $page_absen,
+        'total_pages_absen' => $total_pages_absen,
+        'total_absen' => $total_absen
+    ];
 ?>
 <!doctype html>
 <html lang="id">
@@ -47,11 +55,11 @@
     
     <section class="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md shadow-soft p-4 mb-4">
     <?php
-        // Mengambil parameter filter dari URL atau data yang dikembalikan controller
-        $kelas_absen = $_GET['kelas_absen'] ?? ($data_absensi['kelas_absen'] ?? '');
-        $tanggal = $_GET['tanggal'] ?? ($data_absensi['tanggal'] ?? '');
-        $search_absen = $_GET['search_absen'] ?? ($data_absensi['search_absen'] ?? '');
-        $status = $_GET['status'] ?? ($data_absensi['status'] ?? '');
+        // Mengambil parameter filter dari URL
+        $kelas_absen = $_GET['kelas_absen'] ?? '';
+        $tanggal = $_GET['tanggal'] ?? '';
+        $search_absen = $_GET['search_absen'] ?? '';
+        $status = $_GET['status'] ?? '';
     ?>
     <form method="get" class="grid grid-cols-1 sm:grid-cols-6 gap-2">
         <select name="kelas_absen" class="rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
@@ -91,9 +99,9 @@
         </thead>
         <tbody class="divide-y divide-white/10">
             <?php
-            // Mengambil data dari controller
-            $result_absen = $data_absensi['result_absen'] ?? null;
-            $offset_absen = $data_absensi['offset_absen'] ?? 0;
+            // Mengambil data dari variabel yang sudah di-set oleh controller
+            $result_absen = $result_absen ?? null;
+            $offset_absen = $offset_absen ?? 0;
             
             // Fungsi untuk menampilkan badge status
             function badge($status){
@@ -132,9 +140,9 @@
     
     <div class="mt-4 flex items-center gap-2 flex-wrap">
         <?php
-        // Pagination
-        $total_pages_absen = $data_absensi['total_pages_absen'] ?? 1;
-        $page_absen = $data_absensi['page_absen'] ?? 1;
+        // Pagination - menggunakan variabel dari controller
+        $total_pages_absen = $total_pages_absen ?? 1;
+        $page_absen = $page_absen ?? 1;
         
         for ($i = 1; $i <= $total_pages_absen; $i++) {
             $active = ($i == $page_absen) ? "bg-white text-neutral-900" : "bg-white/10 text-white hover:bg-white/15";

@@ -1,40 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../auth/login.php");
-    exit;
-}
-include '../config/db.php';
-
-// Ambil parameter id user
-$id = $_GET['id'] ?? '';
-
-if (empty($id)) {
-    die("ID tidak valid");
-}
-
-// Ambil data lama dari tabel users
-$query = mysqli_query($conn, "SELECT * FROM users WHERE id='$id'");
-$data = mysqli_fetch_assoc($query);
-
-if (!$data) {
-    die("Data tidak ditemukan");
-}
-
-// Jika form disubmit
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $kelas_input = $_POST['kelas'];
-    $pass = !empty($_POST['password']) ? md5($_POST['password']) : $data['password'];
-
-    $sql = "UPDATE users 
-            SET username='$username', kelas='$kelas_input', password='$pass' 
-            WHERE id='$id'";
-    mysqli_query($conn, $sql);
-
-    header("Location: admin_page.php");
-    exit;
-}
+ require_once '../controller/editDataController.php';
 ?>
 <!doctype html>
 <html lang="id">
@@ -64,44 +29,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 </div>
 
-<?php
-// Candidate arrays resolver for flexible variable names
-$__candidates = [];
-if (isset($row) && is_array($row)) $__candidates[] = $row;
-if (isset($user) && is_array($user)) $__candidates[] = $user;
-if (isset($data) && is_array($data)) $__candidates[] = $data;
-function __val($__cands, $key, $default=''){ foreach($__cands as $c){ if(isset($c[$key])) return $c[$key]; } return $default; }
-?>
-
 <section class="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md shadow-soft p-4">
-  <?php if (!empty($_GET['ok'])): ?>
-    <div class="mb-3 rounded-xl border border-green-500/30 bg-green-500/15 text-green-100 px-4 py-3">Data berhasil diperbarui.</div>
-  <?php endif; ?>
-  <?php if (!empty($_GET['err'])): ?>
-    <div class="mb-3 rounded-xl border border-red-500/30 bg-red-500/15 text-red-100 px-4 py-3">Terjadi kesalahan.</div>
-  <?php endif; ?>
-
   <form method="post" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <div>
       <label class="block text-sm mb-1" for="username">Username</label>
-      <input id="username" name="username" value="<?= htmlspecialchars(__val($__candidates,'username','')) ?>" required
+      <input id="username" name="username" value="<?= htmlspecialchars($data['username'] ?? '') ?>" required
              class="w-full rounded-lg bg-white/90 text-neutral-900 placeholder-neutral-500 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
     </div>
     <div>
       <label class="block text-sm mb-1" for="kelas">Kelas</label>
-      <?php $kelas_val = __val($__candidates,'kelas',''); ?>
       <select id="kelas" name="kelas" class="w-full rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
         <?php foreach (['X','XI','XII','-'] as $k): ?>
-          <option value="<?= $k ?>" <?= $kelas_val===$k?'selected':'' ?>><?= $k ?></option>
+          <option value="<?= $k ?>" <?= ($data['kelas'] ?? '')===$k?'selected':'' ?>><?= $k ?></option>
         <?php endforeach; ?>
       </select>
     </div>
     <div>
       <label class="block text-sm mb-1" for="role">Role</label>
-      <?php $role_val = __val($__candidates,'role','siswa'); ?>
       <select id="role" name="role" class="w-full rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
         <?php foreach (['siswa','admin'] as $r): ?>
-          <option value="<?= $r ?>" <?= $role_val===$r?'selected':'' ?>><?= ucfirst($r) ?></option>
+          <option value="<?= $r ?>" <?= ($data['role'] ?? 'siswa')===$r?'selected':'' ?>><?= ucfirst($r) ?></option>
         <?php endforeach; ?>
       </select>
     </div>

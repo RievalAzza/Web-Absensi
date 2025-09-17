@@ -7,6 +7,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
 
 include '../config/db.php';
 
+$database = new Database("localhost", "root", "", "absensi");
+$conn = $database->getConnection();
+
 $kelasList = ['X', 'XI', 'XII'];
 $kelasData = [];
 

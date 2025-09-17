@@ -1,16 +1,30 @@
 <?php
+
+require_once "../config/db.php";
+require_once "../classes/User.php";
+
 session_start();
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     header("Location: ../auth/login.php");
     exit;
 }
 
-include "../config/db.php";
+$database = new Database("localhost", "root", "", "absensi");
+$dataHandler = new User($database);
 
-$id = $_GET['id'] ?? 0;
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Cegah hapus admin
-mysqli_query($conn, "DELETE FROM users WHERE id='$id' AND role='siswa'");
+if ($id > 0) {
+    $success = $dataHandler->deleteStudent($id);
 
-header("Location: ../pages/admin_page.php");
-exit;
+    if ($success) {
+        header("Location: ../pages/data_siswa.php?pesan=hapus_berhasil");
+    } else {
+        header("Location: ../pages/data_siswa.php?pesan=hapus_gagal");
+    }
+    exit;
+} else {
+    header("Location: ../pages/data_siswa.php?pesan=hapus_gagal");
+    exit;
+}
+?>

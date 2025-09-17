@@ -1,29 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../auth/login.php");
-    exit;
-}
-
-include "../config/db.php";
-
-// Ambil kelas dari query string (x, xi, xii)
-$kelas = $_GET['kelas'] ?? '';
-
-// Jika form disubmit
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $kelas_input = mysqli_real_escape_string($conn, $_POST['kelas']);
-    $pass = md5($_POST['password']);
-
-    // Insert ke tabel users
-    $sql = "INSERT INTO users (username, password, kelas, role) 
-            VALUES ('$username', '$pass', '$kelas_input', 'siswa')";
-    mysqli_query($conn, $sql);
-
-    header("Location: admin_page.php");
-    exit;
-}
+ require_once '../controller/tambahDataController.php';
 ?>
 <!doctype html>
 <html lang="id">
@@ -64,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label class="block text-sm mb-1" for="kelas">Kelas</label>
       <select id="kelas" name="kelas" class="w-full rounded-lg bg-white/90 text-neutral-900 border border-white/50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-white/70">
         <?php foreach (['X','XI','XII','-'] as $k): ?>
-          <option value="<?= $k ?>" <?= (($_GET['kelas'] ?? '')===$k)?'selected':'' ?>><?= $k ?></option>
+          <option value="<?= $k ?>" <?= (($kelas ?? '')===$k)?'selected':'' ?>><?= $k ?></option>
         <?php endforeach; ?>
       </select>
     </div>
